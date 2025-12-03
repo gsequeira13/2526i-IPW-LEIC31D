@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
   title: Books API
-  description: This is a simple API for managing books
+  description: This is a simple API for managing groups
   contact:
     email: luis.falcao@isel.pt
   license:
@@ -50,7 +50,7 @@ paths:
   #       400:
   #         description: Invalid input, object invalid
   #         content: {}
-  /api/books:
+  /api/groups:
     description: Resource that contains all Books
     get:
       tags:
@@ -62,13 +62,13 @@ paths:
       # parameters:
       #   - name: q
       #     in: query
-      #     description: Query to match in book title
+      #     description: Query to match in group title
       #     schema: 
       #       type: string
       #     required: false
       #   - name: limit
       #     in: query
-      #     description: number of books to return
+      #     description: number of groups to return
       #     schema:
       #       default: 30
       #       minimum: 0
@@ -84,23 +84,25 @@ paths:
       #     required: false
       responses:
         200:
-          description: get all books, with the specified criteria and pagination 
+          description: get all groups, with the specified criteria and pagination 
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Books'
+                type: array
+                items:
+                  $ref: '#/components/schemas/group'
         400:
           $ref: "#/components/responses/400BadRequest"          
     post:
       tags:
       - Books
-      summary: adds a book
-      description: Adds a book to the system
+      summary: adds a group
+      description: Adds a group to the system
       operationId: addBook
       security:
         - bearerAuth: []
       requestBody:
-        description: Book to add
+        description: group to add
         content:
           application/json:
             schema:
@@ -108,26 +110,26 @@ paths:
         required: true
       responses:
         201:
-          description: Book created
+          description: group created
           content: 
             application/json:
               schema:
                 $ref: '#/components/schemas/NewBookCreated'
         400:
           $ref: "#/components/responses/400BadRequest"
-  /api/books/{bookId}:
-    description: The resource that represents one Book
+  /api/groups/{bookId}:
+    description: The resource that represents one group
     get:
       tags:
       - Books
-      summary: Get a book given its id
+      summary: Get a group given its id
       operationId: getBookById
       security:
         - bearerAuth: []
       parameters:
       - name: bookId
         in: path
-        description: ID of book that to be fetched
+        description: ID of group that to be fetched
         required: true
         schema:
           type: integer
@@ -138,7 +140,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Book'
+                $ref: '#/components/schemas/group'
         400:
           $ref: "#/components/responses/400BadRequest"
         404:
@@ -146,18 +148,18 @@ paths:
     put:
       tags:
       - Books
-      summary: updates a book
-      description: Updates a Book in the system
+      summary: updates a group
+      description: Updates a group in the system
       operationId: updateBook
       parameters:
       - name: bookId
         in: path
-        description: ID of the book to be deleted
+        description: ID of the group to be deleted
         required: true
         schema:
           type: integer
       requestBody:
-        description: Book to add
+        description: group to add
         content:
           application/json:
             schema:
@@ -165,7 +167,7 @@ paths:
         required: false
       responses:
         201:
-          description: book updated
+          description: group updated
           content: 
             application/json:
               schema: 
@@ -173,46 +175,38 @@ paths:
                 properties: 
                   message:
                     type: string
-                    example: "Book with id 1 updated"
-
-
-
+                    example: "group with id 1 updated"
         404:
           $ref: "#/components/responses/404NotFound"  
     delete:
       tags:
       - Books
-      summary: Delete a book by ID
-      description: Delete a book by ID
+      summary: Delete a group by ID
+      description: Delete a group by ID
       operationId: deleteBook
       parameters:
       - name: bookId
         in: path
-        description: ID of the book to be deleted
+        description: ID of the group to be deleted
         required: true
         schema:
           type: integer
       responses:
         200:
-          description: "Book successfully deleted"
+          description: "group successfully deleted"
           content: {}
         400:
           $ref: "#/components/responses/400BadRequest"
         404:
           $ref: "#/components/responses/404NotFound"
-components:
-  securitySchemes:
+
+          components:
+  
+            securitySchemes:
     bearerAuth:            # arbitrary name for the security scheme
       type: http
       scheme: bearer
   schemas:
-    Books:
-      type: object
-      properties: 
-        books:
-          type: array
-          items:
-            $ref: '#/components/schemas/Book'
     NewBook:
       required:
       - title
@@ -225,7 +219,7 @@ components:
         isbn:
           type: string
           example: 978-3-16-148410-0
-    Book:
+    group:
       allOf: 
         - type: object
         - $ref: "#/components/schemas/NewBook"
@@ -250,14 +244,14 @@ components:
     NewBookCreated:
       required:
       - status
-      - book
+      - group
       type: object
       properties:
         status:
           type: string
-          example: Book with id 123 created with success
-        book:
-          $ref: '#/components/schemas/Book'
+          example: group with id 123 created with success
+        group:
+          $ref: '#/components/schemas/group'
     MissingParameter:
       type: object
       properties:
@@ -279,10 +273,10 @@ components:
         uri:
           type: string
           format: uri
-          example: "/books/1"
+          example: "/groups/1"
         description:
           type: string
-          example: "Book with id 1 not found"
+          example: "group with id 1 not found"
   responses: 
     404NotFound:
       description: "Resource not found"

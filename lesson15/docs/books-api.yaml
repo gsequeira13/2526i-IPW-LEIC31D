@@ -91,6 +91,9 @@ paths:
                 $ref: '#/components/schemas/Books'
         400:
           $ref: "#/components/responses/400BadRequest"          
+        403: 
+          $ref: "#/components/responses/403Forbidden"
+
     post:
       tags:
       - Books
@@ -283,6 +286,16 @@ components:
         description:
           type: string
           example: "Book with id 1 not found"
+    Forbidden: 
+      type: object
+      properties:
+        uri:
+          type: string
+          format: uri
+          example: "/books/1"
+        description:
+          type: string
+          example: "The access to the resource is forbidden"      
   responses: 
     404NotFound:
       description: "Resource not found"
@@ -298,6 +311,13 @@ components:
             oneOf:
               - $ref: "#/components/schemas/MissingParameter"
               - $ref: "#/components/schemas/InvalidBody"
-              
+      
+    403Forbidden:
+      description: "The client does not have access to the resource"
+      content: 
+        application/json:
+          schema: 
+            $ref: "#/components/schemas/Forbidden"
+          
             
       
